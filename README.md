@@ -8,7 +8,7 @@ A tool to create & restore full backups of Docker containers
 Docker services usually have a bunch of volatile data volumes that need to be
 backed up. Backing up an entire (file)system is easy, but often enough you just
 want to create a backup of a single (or a few) containers, maybe to restore them
-on another sytem later.
+on another system later.
 
 Some services also need to be aware (flushed/synced/paused) of an impending
 backup, e.g. databases. The backup should be run on the Docker host, as you
@@ -16,21 +16,21 @@ don't want to have a backup client configured & running in every single
 container either, since this would add a lot of maintenance & administration
 overhead.
 
-docker-backup directly connects to Docker, analyzes a container's mounts &
+`docker-backup` directly connects to Docker, analyzes a container's mounts &
 volumes, and generates a list of dirs & files that need to be backed up on the
 host system. This also produces a little JSON with all the metadata information
 about the container, so it can be restored or cloned on a different host.
 
-The generated list can be fed to an existing backup solution or docker-backup
+The generated list can be fed to an existing backup solution or `docker-backup`
 can directly create a `.tar` image of your container, so you can simply copy it
 to another machine.
 
 ## Installation
 
-docker-backup requires Go 1.11 or higher. Make sure you have a working Go
+`docker-backup` requires Go 1.11 or higher. Make sure you have a working Go
 environment. See the [install instructions](http://golang.org/doc/install.html).
 
-docker-backup works with Docker hosts running Docker 18.02 (API version 1.36)
+`docker-backup` works with Docker hosts running Docker 18.02 (API version 1.36)
 and newer.
 
 ### From source
