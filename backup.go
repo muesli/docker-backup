@@ -150,7 +150,7 @@ func backup(ID string) error {
 	}
 
 	filename := sanitize.Path(fmt.Sprintf("%s-%s", conf.Config.Image, ID))
-	filename = strings.ReplaceAll(filename, "/", "_")
+	filename = strings.Replace(filename, "/", "_", -1)
 	if BackupTar {
 		return backupTar(filename, backup)
 	}
