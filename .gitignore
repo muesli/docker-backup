@@ -13,3 +13,4 @@
 
 # Builds
 docker-backup
+/dist
