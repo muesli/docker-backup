@@ -1,7 +1,7 @@
 docker-backup
 =============
 
-A tool to create & restore full backups of Docker containers
+A tool to create & restore complete, self-contained backups of Docker containers
 
 # What's the issue
 
