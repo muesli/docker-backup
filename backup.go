@@ -19,6 +19,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Backup is used to gather all of a container's metadata, so we can encode it
+// as JSON and store it
 type Backup struct {
 	Config  *container.Config
 	PortMap nat.PortMap
@@ -26,9 +28,9 @@ type Backup struct {
 }
 
 var (
-	BackupTar     = false
-	BackupAll     = false
-	BackupStopped = false
+	optTar     = false
+	optAll     = false
+	optStopped = false
 
 	paths []string
 	tw    *tar.Writer
@@ -37,7 +39,7 @@ var (
 		Use:   "backup [container-id]",
 		Short: "creates a backup of a container",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if BackupAll {
+			if optAll {
 				return backupAll()
 			}
 
@@ -151,7 +153,7 @@ func backup(ID string) error {
 
 	filename := sanitize.Path(fmt.Sprintf("%s-%s", conf.Config.Image, ID))
 	filename = strings.Replace(filename, "/", "_", -1)
-	if BackupTar {
+	if optTar {
 		return backupTar(filename, backup)
 	}
 
@@ -193,7 +195,7 @@ func backup(ID string) error {
 
 func backupAll() error {
 	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
-		All: BackupStopped,
+		All: optStopped,
 	})
 	if err != nil {
 		panic(err)
@@ -210,8 +212,8 @@ func backupAll() error {
 }
 
 func init() {
-	backupCmd.Flags().BoolVarP(&BackupTar, "tar", "t", false, "create tar backups")
-	backupCmd.Flags().BoolVarP(&BackupAll, "all", "a", false, "backup all running containers")
-	backupCmd.Flags().BoolVarP(&BackupStopped, "stopped", "s", false, "in combination with --all: also backup stopped containers")
+	backupCmd.Flags().BoolVarP(&optTar, "tar", "t", false, "create tar backups")
+	backupCmd.Flags().BoolVarP(&optAll, "all", "a", false, "backup all running containers")
+	backupCmd.Flags().BoolVarP(&optStopped, "stopped", "s", false, "in combination with --all: also backup stopped containers")
 	RootCmd.AddCommand(backupCmd)
 }

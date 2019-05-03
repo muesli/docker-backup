@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	RestoreStart = false
+	optStart = false
 
 	restoreCmd = &cobra.Command{
 		Use:   "restore <tar-file>",
@@ -136,7 +136,7 @@ func restoreTar(filename string) error {
 		fmt.Println("Created as:", path)
 	}
 
-	if RestoreStart {
+	if optStart {
 		return startContainer(id)
 	}
 	return nil
@@ -158,7 +158,7 @@ func restore(filename string) error {
 		return err
 	}
 
-	if RestoreStart {
+	if optStart {
 		return startContainer(id)
 	}
 	return nil
@@ -225,6 +225,6 @@ func startContainer(id string) error {
 }
 
 func init() {
-	restoreCmd.Flags().BoolVarP(&RestoreStart, "start", "s", false, "start restored container")
+	restoreCmd.Flags().BoolVarP(&optStart, "start", "s", false, "start restored container")
 	RootCmd.AddCommand(restoreCmd)
 }

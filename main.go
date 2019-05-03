@@ -20,6 +20,7 @@ var (
 	cli *client.Client
 	ctx = context.Background()
 
+	// RootCmd is the core command used for cli-arg parsing
 	RootCmd = &cobra.Command{
 		Use:           "docker-backup",
 		Short:         "docker-backup creates or restores backups of Docker containers",
