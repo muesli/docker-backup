@@ -36,8 +36,6 @@ and newer.
 
 ### From source
 
-The recommended way is to fetch the sources and run make.
-
     git clone https://github.com/muesli/docker-backup.git
     go build
 
