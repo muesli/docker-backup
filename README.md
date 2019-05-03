@@ -18,12 +18,13 @@ overhead.
 
 `docker-backup` directly connects to Docker, analyzes a container's mounts &
 volumes, and generates a list of dirs & files that need to be backed up on the
-host system. This also produces a little JSON with all the metadata information
-about the container, so it can be restored or cloned on a different host.
+host system. This also collects all the metadata information associated with a
+container, so it can be restored or cloned on a different host, including its
+port-mappings and data volumes.
 
-The generated list can be fed to an existing backup solution or `docker-backup`
-can directly create a `.tar` image of your container, so you can simply copy it
-to another machine.
+The generated list can either be fed to an existing backup solution or
+`docker-backup` can directly create a `.tar` image of your container, so you can
+simply copy it to another machine.
 
 ## Installation
 
