@@ -184,7 +184,10 @@ func backup(ID string) error {
 	}
 	defer filelist.Close()
 
-	filelist.WriteString(filename + ".backup.json\n")
+	_, err = filelist.WriteString(filename + ".backup.json\n")
+	if err != nil {
+		return err
+	}
 	for _, s := range paths {
 		_, err := filelist.WriteString(s + "\n")
 		if err != nil {
