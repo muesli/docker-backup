@@ -67,6 +67,11 @@ To backup all containers (regardless of their current running state), run:
 
     docker-backup backup --all --stopped
 
+With the help of `--launch` you can directly launch a backup program with the
+generated file-list supplied as an argument:
+
+    docker-backup backup --all --launch "restic -r /dest backup --password-file pwfile --tag %tag --files-from %list"
+
 ### Restoring a Backup
 
 To restore a container, run `docker-backup` with the `restore` command:

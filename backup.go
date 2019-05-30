@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"syscall"
@@ -28,6 +29,7 @@ type Backup struct {
 }
 
 var (
+	optLaunch  = ""
 	optTar     = false
 	optAll     = false
 	optStopped = false
@@ -182,6 +184,7 @@ func backup(ID string) error {
 	}
 	defer filelist.Close()
 
+	filelist.WriteString(filename + ".backup.json\n")
 	for _, s := range paths {
 		_, err := filelist.WriteString(s + "\n")
 		if err != nil {
@@ -190,6 +193,19 @@ func backup(ID string) error {
 	}
 
 	fmt.Println("Created backup:", filename+".backup.json")
+
+	if optLaunch != "" {
+		optLaunch = strings.ReplaceAll(optLaunch, "%tag", filename)
+		optLaunch = strings.ReplaceAll(optLaunch, "%list", filename+".backup.files")
+
+		fmt.Println("Launching external command and waiting for it to finish:")
+		fmt.Println(optLaunch)
+
+		l := strings.Split(optLaunch, " ")
+		cmd := exec.Command(l[0], l[1:]...)
+		return cmd.Run()
+	}
+
 	return nil
 }
 
@@ -212,6 +228,7 @@ func backupAll() error {
 }
 
 func init() {
+	backupCmd.Flags().StringVarP(&optLaunch, "launch", "l", "", "launch external program with file-list as argument")
 	backupCmd.Flags().BoolVarP(&optTar, "tar", "t", false, "create tar backups")
 	backupCmd.Flags().BoolVarP(&optAll, "all", "a", false, "backup all running containers")
 	backupCmd.Flags().BoolVarP(&optStopped, "stopped", "s", false, "in combination with --all: also backup stopped containers")
