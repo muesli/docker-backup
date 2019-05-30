@@ -34,6 +34,10 @@ environment. See the [install instructions](http://golang.org/doc/install.html).
 `docker-backup` works with Docker hosts running Docker 18.02 (API version 1.36)
 and newer.
 
+### Packages
+
+- Arch Linux: [docker-backup](https://aur.archlinux.org/packages/docker-backup/)
+
 ### From source
 
     git clone https://github.com/muesli/docker-backup.git
