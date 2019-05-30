@@ -198,8 +198,8 @@ func backup(ID string) error {
 	fmt.Println("Created backup:", filename+".backup.json")
 
 	if optLaunch != "" {
-		optLaunch = strings.ReplaceAll(optLaunch, "%tag", filename)
-		optLaunch = strings.ReplaceAll(optLaunch, "%list", filename+".backup.files")
+		optLaunch = strings.Replace(optLaunch, "%tag", filename, -1)
+		optLaunch = strings.Replace(optLaunch, "%list", filename+".backup.files", -1)
 
 		fmt.Println("Launching external command and waiting for it to finish:")
 		fmt.Println(optLaunch)
