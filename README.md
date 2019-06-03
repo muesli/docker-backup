@@ -80,7 +80,7 @@ generated file-list supplied as an argument:
 
 To restore a container, run `docker-backup` with the `restore` command:
 
-    docker-backup restore <backup_file>
+    docker-backup restore <backup file>
 
 `docker-backup` will automatically detect whether you supplied a `.tar` or
 `.json` file and restore the container, including all its port-mappings and data
@@ -89,7 +89,7 @@ volumes.
 If you want to start the container once the restore has finished, add the
 `--start` flag:
 
-    docker-backup restore --start <backup_file>
+    docker-backup restore --start <backup file>
 
 ## Development
 
