@@ -18,7 +18,7 @@ var (
 	optStart = false
 
 	restoreCmd = &cobra.Command{
-		Use:   "restore <tar-file>",
+		Use:   "restore <backup file>",
 		Short: "restores a backup of a container",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
