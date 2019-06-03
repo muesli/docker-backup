@@ -52,7 +52,7 @@ Run `docker-backup --help` to see a full list of options.
 To backup a single container start `docker-backup` with the `backup` command and
 supply the ID of the container:
 
-    docker-backup backup [container ID]
+    docker-backup backup <container ID>
 
 This will create a `.json` file with the container's metadata, as well as a file
 containing all the volumes that need to be backed up with an external tool like
@@ -61,7 +61,7 @@ restic or borgbackup.
 If you want to directly create a `.tar` file containing all the container's
 data, simply run:
 
-    docker-backup backup --tar [container ID]
+    docker-backup backup --tar <container ID>
 
 You can also backup all running containers on the host with the `--all` flag:
 
