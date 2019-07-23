@@ -10,8 +10,8 @@ backed up. Backing up an entire (file)system is easy, but often enough you just
 want to create a backup of a single (or a few) containers, maybe to restore them
 on another system later.
 
-Some services also need to be aware (flushed/synced/paused) of an impending
-backup, e.g. databases. The backup should be run on the Docker host, as you
+Some services, such as databases, also need to be aware (flushed/synced/paused)
+of an impending backup. The backup should be run on the Docker host, as you
 don't want to have a backup client configured & running in every single
 container either, since this would add a lot of maintenance & administration
 overhead.
