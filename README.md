@@ -56,7 +56,7 @@ supply the ID of the container:
 
 This will create a `.json` file with the container's metadata, as well as a file
 containing all the volumes that need to be backed up with an external tool like
-restic or borgbackup.
+[restic](https://restic.net/) or [borgbackup](https://www.borgbackup.org/).
 
 If you want to directly create a `.tar` file containing all the container's
 data, simply run:
