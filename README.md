@@ -41,6 +41,7 @@ and newer.
 ### From source
 
     git clone https://github.com/muesli/docker-backup.git
+    cd docker-backup
     go build
 
 Run `docker-backup --help` to see a full list of options.
