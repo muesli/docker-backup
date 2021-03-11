@@ -1,8 +1,9 @@
 env:
   - GO111MODULE=on
+  - CGO_ENABLED=0
 before:
   hooks:
-  - go mod download
+  - go mod tidy
 builds:
   -
     binary: docker-backup
@@ -18,14 +19,7 @@ builds:
     goarm:
       - 6
       - 7
-    ignore:
-      - goos: darwin
-        goarch: 386
-      - goos: linux
-        goarch: arm
-        goarm: 7
-sign:
-  artifacts: checksum
+
 archives:
   -
     replacements:
@@ -34,6 +28,10 @@ archives:
       windows: Windows
       386: i386
       amd64: x86_64
+
+signs:
+  - artifacts: checksum
+
 checksum:
   name_template: 'checksums.txt'
 snapshot:
