@@ -83,17 +83,20 @@ func collectFileTar(path string, info os.FileInfo, err error) error {
 		return err
 	}
 
-	if !info.Mode().IsDir() {
-		file, err := os.Open(path)
-		if err != nil {
-			return err
-		}
-		_, err = io.Copy(tw, file)
-		if err != nil {
-			return err
-		}
+	if !info.Mode().IsRegular() {
+		return nil
 	}
-	return nil
+	if info.Mode().IsDir() {
+		return nil
+	}
+
+	file, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(tw, file)
+	return err
 }
 
 func backupTar(filename string, backup Backup) error {
