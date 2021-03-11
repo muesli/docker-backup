@@ -1,6 +1,11 @@
 docker-backup
 =============
 
+[![Latest Release](https://img.shields.io/github/release/muesli/docker-backup.svg)](https://github.com/muesli/docker-backup/releases)
+[![Build Status](https://github.com/muesli/docker-backup/workflows/build/badge.svg)](https://github.com/muesli/docker-backup/actions)
+[![Go ReportCard](http://goreportcard.com/badge/muesli/docker-backup)](http://goreportcard.com/report/muesli/docker-backup)
+[![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](https://pkg.go.dev/github.com/muesli/docker-backup)
+
 A tool to create & restore complete, self-contained backups of Docker containers
 
 # What's the issue
@@ -91,9 +96,3 @@ If you want to start the container once the restore has finished, add the
 `--start` flag:
 
     docker-backup restore --start <backup file>
-
-## Development
-
-[![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](https://godoc.org/github.com/muesli/docker-backup)
-[![Build Status](https://travis-ci.org/muesli/docker-backup.svg?branch=master)](https://travis-ci.org/muesli/docker-backup)
-[![Go ReportCard](http://goreportcard.com/badge/muesli/docker-backup)](http://goreportcard.com/report/muesli/docker-backup)
