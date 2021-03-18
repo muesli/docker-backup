@@ -66,6 +66,11 @@ func collectFileTar(path string, info os.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
+	if info.Mode()&os.ModeSocket != 0 {
+		// ignore sockets
+		return nil
+	}
+
 	fmt.Println("Adding", path)
 
 	th, err := tar.FileInfoHeader(info, path)
