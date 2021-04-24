@@ -148,6 +148,40 @@ func backupTar(filename string, backup Backup) error {
 	return nil
 }
 
+func getFullImageName(imageName string) (string, error) {
+	// If the image already specifies a tag we can safely use as-is
+	if strings.Contains(imageName, ":") {
+		return imageName, nil
+	}
+
+	// If the used image doesn't include tag information try to find one (if it exists).
+	images, err := cli.ImageList(ctx, types.ImageListOptions{})
+	if err != nil {
+		// Couldn't get image list, abort
+		return imageName, err
+	}
+
+	for _, image := range images {
+		if (!strings.Contains(imageName, image.ID)) || len(image.RepoTags) == 0 {
+			// unrelated image or image entry doesn't have any tags, move on
+			continue
+		}
+
+		for _, tag := range image.RepoTags {
+			// use closer matching tag if it exists
+			if !strings.Contains(tag, imageName) {
+				continue
+			}
+			return tag, nil
+		}
+		// If none of the tags matches the base image name, return the first tag
+		return image.RepoTags[0], nil
+	}
+
+	// There is no tag on the matching image, just have to go with what was provided
+	return imageName, nil
+}
+
 func backup(ID string) error {
 	conf, err := cli.ContainerInspect(ctx, ID)
 	if err != nil {
@@ -156,6 +190,12 @@ func backup(ID string) error {
 	fmt.Printf("Creating backup of %s (%s, %s)\n", conf.Name[1:], conf.Config.Image, conf.ID[:12])
 
 	paths = []string{}
+
+	conf.Config.Image, err = getFullImageName(conf.Config.Image)
+	if err != nil {
+		return err
+	}
+
 	backup := Backup{
 		Name:    conf.Name,
 		PortMap: conf.HostConfig.PortBindings,
