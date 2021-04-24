@@ -166,10 +166,13 @@ func restore(filename string) error {
 
 func createContainer(backup Backup) (string, error) {
 	fmt.Println("Restoring Container with hostname:", backup.Config.Hostname)
-	fmt.Println("Pulling Image:", backup.Config.Image)
-	_, err := cli.ImagePull(ctx, backup.Config.Image, types.ImagePullOptions{})
+	_, _, err := cli.ImageInspectWithRaw(ctx, backup.Config.Image)
 	if err != nil {
-		return "", err
+		fmt.Println("Pulling Image:", backup.Config.Image)
+		_, err := cli.ImagePull(ctx, backup.Config.Image, types.ImagePullOptions{})
+		if err != nil {
+			return "", err
+		}
 	}
 	// io.Copy(os.Stdout, reader)
 
