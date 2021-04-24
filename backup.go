@@ -23,6 +23,7 @@ import (
 // Backup is used to gather all of a container's metadata, so we can encode it
 // as JSON and store it
 type Backup struct {
+	Name    string
 	Config  *container.Config
 	PortMap nat.PortMap
 	Mounts  []types.MountPoint
@@ -156,6 +157,7 @@ func backup(ID string) error {
 
 	paths = []string{}
 	backup := Backup{
+		Name:    conf.Name,
 		PortMap: conf.HostConfig.PortBindings,
 		Config:  conf.Config,
 		Mounts:  conf.Mounts,

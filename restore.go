@@ -165,7 +165,10 @@ func restore(filename string) error {
 }
 
 func createContainer(backup Backup) (string, error) {
-	fmt.Println("Restoring Container with hostname:", backup.Config.Hostname)
+	nameparts := strings.Split(backup.Name, "/")
+	name := nameparts[len(nameparts)-1]
+	fmt.Println("Restoring Container:", name)
+	
 	_, _, err := cli.ImageInspectWithRaw(ctx, backup.Config.Image)
 	if err != nil {
 		fmt.Println("Pulling Image:", backup.Config.Image)
@@ -178,7 +181,7 @@ func createContainer(backup Backup) (string, error) {
 
 	resp, err := cli.ContainerCreate(ctx, backup.Config, &container.HostConfig{
 		PortBindings: backup.PortMap,
-	}, nil, "")
+	}, nil, name)
 	if err != nil {
 		return "", err
 	}
