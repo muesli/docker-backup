@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
 	"github.com/spf13/cobra"
 )
 
@@ -176,9 +175,7 @@ func createContainer(backup Backup) (string, error) {
 	}
 	// io.Copy(os.Stdout, reader)
 
-	resp, err := cli.ContainerCreate(ctx, backup.Config, &container.HostConfig{
-		PortBindings: backup.PortMap,
-	}, nil, "")
+	resp, err := cli.ContainerCreate(ctx, backup.Config, backup.HostConfig, nil, "")
 	if err != nil {
 		return "", err
 	}
