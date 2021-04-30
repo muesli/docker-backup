@@ -34,6 +34,7 @@ var (
 	optTar     = false
 	optAll     = false
 	optStopped = false
+	optExclude = []string{}
 
 	paths []string
 	tw    *tar.Writer
@@ -105,7 +106,7 @@ func collectFileTar(path string, info os.FileInfo, err error) error {
 	return err
 }
 
-func backupTar(filename string, backup Backup) error {
+func backupTar(filename string, backup Backup, binds []types.MountPoint) error {
 	b, err := json.MarshalIndent(backup, "", "  ")
 	if err != nil {
 		return err
@@ -143,6 +144,15 @@ func backupTar(filename string, backup Backup) error {
 		}
 	}
 
+	for _, m := range binds {
+		// fmt.Printf("Mount (type %s) %s -> %s\n", m.Type, m.Source, m.Destination)
+
+		err := filepath.Walk(m.Source, collectFileTar)
+		if err != nil {
+			return err
+		}
+	}
+
 	tw.Close()
 	fmt.Println("Created backup:", filename+".tar")
 	return nil
@@ -155,18 +165,41 @@ func backup(ID string) error {
 	}
 	fmt.Printf("Creating backup of %s (%s, %s)\n", conf.Name[1:], conf.Config.Image, conf.ID[:12])
 
-	paths = []string{}
+	var mounts []types.MountPoint
+	var backupFiles []types.MountPoint
+
+	for _, mount := range conf.Mounts {
+		if mount.Type == "bind" {
+			skip := false
+			for _, exclude := range optExclude {
+				if strings.HasPrefix(mount.Source, exclude) {
+					skip = true
+					break
+				}
+			}
+
+			if !skip {
+				fmt.Println("Backup bind files:", mount.Source)
+				backupFiles = append(backupFiles, mount)
+			}
+		} else {
+			fmt.Println("Backup volume files:", mount.Source)
+			mounts = append(mounts, mount)
+			backupFiles = append(backupFiles, mount)
+		}
+	}
+
 	backup := Backup{
 		Name:    conf.Name,
 		PortMap: conf.HostConfig.PortBindings,
 		Config:  conf.Config,
-		Mounts:  conf.Mounts,
+		Mounts:  mounts,
 	}
 
 	filename := sanitize.Path(fmt.Sprintf("%s-%s", conf.Config.Image, ID))
 	filename = strings.Replace(filename, "/", "_", -1)
 	if optTar {
-		return backupTar(filename, backup)
+		return backupTar(filename, backup, backupFiles)
 	}
 
 	b, err := json.MarshalIndent(backup, "", "  ")
@@ -180,7 +213,8 @@ func backup(ID string) error {
 		return err
 	}
 
-	for _, m := range conf.Mounts {
+    paths = []string{}
+	for _, m := range backupFiles {
 		// fmt.Printf("Mount (type %s) %s -> %s\n", m.Type, m.Source, m.Destination)
 		err := filepath.Walk(m.Source, collectFile)
 		if err != nil {
@@ -245,5 +279,6 @@ func init() {
 	backupCmd.Flags().BoolVarP(&optTar, "tar", "t", false, "create tar backups")
 	backupCmd.Flags().BoolVarP(&optAll, "all", "a", false, "backup all running containers")
 	backupCmd.Flags().BoolVarP(&optStopped, "stopped", "s", false, "in combination with --all: also backup stopped containers")
+	backupCmd.Flags().StringArrayVarP(&optExclude, "exclude", "e", []string{}, "exclude file paths that start with this, can use multiple times")
 	RootCmd.AddCommand(backupCmd)
 }
