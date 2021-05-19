@@ -3,7 +3,7 @@ docker-backup
 
 [![Latest Release](https://img.shields.io/github/release/muesli/docker-backup.svg)](https://github.com/muesli/docker-backup/releases)
 [![Build Status](https://github.com/muesli/docker-backup/workflows/build/badge.svg)](https://github.com/muesli/docker-backup/actions)
-[![Go ReportCard](http://goreportcard.com/badge/muesli/docker-backup)](http://goreportcard.com/report/muesli/docker-backup)
+[![Go ReportCard](https://goreportcard.com/badge/muesli/docker-backup)](https://goreportcard.com/report/muesli/docker-backup)
 [![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](https://pkg.go.dev/github.com/muesli/docker-backup)
 
 A tool to create & restore complete, self-contained backups of Docker containers
@@ -34,7 +34,7 @@ simply copy it to another machine.
 ## Installation
 
 `docker-backup` requires Go 1.11 or higher. Make sure you have a working Go
-environment. See the [install instructions](http://golang.org/doc/install.html).
+environment. See the [install instructions](https://golang.org/doc/install.html).
 
 `docker-backup` works with Docker hosts running Docker 18.02 (API version 1.36)
 and newer.
