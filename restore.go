@@ -8,10 +8,12 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/spf13/cobra"
+	"github.com/zloylos/grsync"
 )
 
 var (
@@ -158,6 +160,11 @@ func restore(filename string) error {
 		return err
 	}
 
+	err = restoreFiles(filename, id, backup)
+	if err != nil {
+		return err
+	}
+
 	if optStart {
 		return startContainer(id)
 	}
@@ -202,6 +209,74 @@ func createContainer(backup Backup) (string, error) {
 	return resp.ID, nil
 }
 
+func restoreFiles(filename string, id string, backup Backup) error {
+	conf, err := cli.ContainerInspect(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	tt := map[string]string{}
+	for _, oldPath := range backup.Mounts {
+		for _, hostPath := range conf.Mounts {
+			if oldPath.Destination == hostPath.Destination {
+				tt[oldPath.Source] = hostPath.Source
+				break
+			}
+		}
+	}
+
+	outDir := strings.TrimRight(filename, ".json")
+	for oldPath, newPath := range tt {
+		skip := false
+		for _, exclude := range optExclude {
+			if strings.HasPrefix(oldPath, exclude) {
+				skip = true
+				break
+			}
+		}
+
+		if skip {
+			fmt.Println("Skipping './" + backupFiles + "'")
+			continue
+		}
+
+		backupFiles := outDir + oldPath
+		fmt.Println("Restoring './" + backupFiles + "' -> '" + newPath + "'")
+
+		if info, err := os.Stat(backupFiles); err == nil && info.IsDir() {
+			backupFiles += "/"
+			newPath += "/"
+		}
+
+		task := grsync.NewTask(
+			backupFiles,
+			newPath,
+			grsync.RsyncOptions{},
+		)
+
+		go func() {
+			for {
+				state := task.State()
+				fmt.Printf(
+					"\rprogress: %.2f / rem. %d / tot. %d",
+					state.Progress,
+					state.Remain,
+					state.Total,
+				)
+				time.Sleep(time.Second)
+			}
+		}()
+
+		err = task.Run()
+		if err != nil {
+			return err
+		}
+		fmt.Printf("\r")
+	}
+
+	return nil
+}
+
 func startContainer(id string) error {
 	fmt.Println("Starting container:", id[:12])
 
@@ -232,5 +307,6 @@ func startContainer(id string) error {
 
 func init() {
 	restoreCmd.Flags().BoolVarP(&optStart, "start", "s", false, "start restored container")
+	restoreCmd.Flags().StringArrayVarP(&optExclude, "exclude", "e", []string{}, "skip restoring files that start with this, can use multiple times")
 	RootCmd.AddCommand(restoreCmd)
 }
