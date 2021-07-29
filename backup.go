@@ -34,6 +34,7 @@ var (
 	optTar     = false
 	optAll     = false
 	optStopped = false
+	optVerbose = false
 
 	paths []string
 	tw    *tar.Writer
@@ -59,6 +60,10 @@ func collectFile(path string, info os.FileInfo, err error) error {
 		return err
 	}
 
+	if optVerbose {
+		fmt.Println("Adding", path)
+	}
+
 	paths = append(paths, path)
 	return nil
 }
@@ -72,7 +77,9 @@ func collectFileTar(path string, info os.FileInfo, err error) error {
 		return nil
 	}
 
-	fmt.Println("Adding", path)
+	if optVerbose {
+		fmt.Println("Adding", path)
+	}
 
 	th, err := tar.FileInfoHeader(info, path)
 	if err != nil {
@@ -285,5 +292,6 @@ func init() {
 	backupCmd.Flags().BoolVarP(&optTar, "tar", "t", false, "create tar backups")
 	backupCmd.Flags().BoolVarP(&optAll, "all", "a", false, "backup all running containers")
 	backupCmd.Flags().BoolVarP(&optStopped, "stopped", "s", false, "in combination with --all: also backup stopped containers")
+	backupCmd.Flags().BoolVarP(&optVerbose, "verbose", "v", false, "print detailed backup progress")
 	RootCmd.AddCommand(backupCmd)
 }
